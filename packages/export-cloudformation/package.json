@@ -5,6 +5,7 @@
   "description": "Export ADAC diagrams to AWS CloudFormation templates",
   "author": "Mindfire Digital",
   "license": "MIT",
+  "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -35,5 +36,21 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"fs.cpSync('src/templates', 'dist/templates', {recursive: true})\"",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mindfiredigital/adac-parser": "workspace:*",
+    "@mindfiredigital/adac-schema": "workspace:*",
+    "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "cfn-lint": "^1.9.7",
+    "vitest": "^2.1.9",
+    "tsup": "^8.3.5",
+    "typescript": "^5.9.3"
   }
 }
