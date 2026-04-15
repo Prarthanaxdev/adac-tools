@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "module",
   "description": "Export ADAC diagrams to AWS CloudFormation templates",
-  "author": "Yogesh Sharma",
+  "author": "Mindfire Digital",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -32,9 +32,11 @@
     "url": "https://github.com/mindfiredigital/adac-tools.git",
     "directory": "packages/export-cloudformation"
   },
-  "devDependencies": {
-    "@types/node": "^22.13.4",
-    "cfn-lint": "^1.9.7",
-    "vitest": "^2.1.9"
-  }
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
+  "files": [
+    "dist"
+  ]
 }
