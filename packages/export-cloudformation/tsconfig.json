@@ -5,9 +5,10 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "@mindfiredigital/adac-parser": ["../parser/dist/index.d.ts"],
-      "@mindfiredigital/adac-schema": ["../schema/dist/index.d.ts"]
+      "@mindfiredigital/adac-parser": ["../parser/src/index.ts"],
+      "@mindfiredigital/adac-schema": ["../schema/src/index.ts"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "references": [{ "path": "../parser" }, { "path": "../schema" }]
 }
