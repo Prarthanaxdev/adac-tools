@@ -36,10 +36,18 @@ The test suite also includes an optional `cfn-lint` validation check when
 ## Example
 
 ```ts
-import { generateCloudFormationFromAdacFile } from '@mindfiredigital/adac-export-cloudformation';
+import {
+  generateCloudFormationFromAdacFile,
+  type CloudFormationGenerationResult,
+} from '@mindfiredigital/adac-export-cloudformation';
 
-const result = generateCloudFormationFromAdacFile('./yamls/aws.adac.yaml');
+const result: CloudFormationGenerationResult =
+  generateCloudFormationFromAdacFile('./yamls/aws.adac.yaml');
 console.log(result.templateYaml);
+
+for (const diagnostic of result.diagnostics) {
+  console.warn(diagnostic);
+}
 ```
 
 ## Example (CLI)

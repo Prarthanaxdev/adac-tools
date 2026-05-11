@@ -55,6 +55,10 @@ export function mapNetworkingServices(
       const vpc = cfg.vpc as string | undefined;
       const availabilityZoneParameter = `${id}AvailabilityZone`;
 
+      if (!vpc) {
+        throw new Error(`Missing required cfg.vpc for Subnet ${service.id}.`);
+      }
+
       parameters[availabilityZoneParameter] = {
         Type: 'AWS::EC2::AvailabilityZone::Name',
         Description: `Availability Zone for ${service.id}`,
@@ -64,7 +68,7 @@ export function mapNetworkingServices(
       resources[id] = {
         Type: 'AWS::EC2::Subnet',
         Properties: {
-          VpcId: vpc ? ref(vpc) : undefined,
+          VpcId: ref(vpc),
           CidrBlock: (cfg.cidr as string | undefined) ?? '10.0.0.0/24',
           AvailabilityZone: { Ref: availabilityZoneParameter },
           MapPublicIpOnLaunch: cfg.public === true,
@@ -189,7 +193,6 @@ export function mapNetworkingServices(
       resources[id] = {
         Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer',
         Properties: {
-          Name: service.id,
           Type: 'application',
           Scheme: (cfg.scheme as string | undefined) ?? 'internet-facing',
           Subnets: subnets,

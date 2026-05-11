@@ -12,6 +12,7 @@ export function mapDatabaseServices(
   const parameters: Record<string, CloudFormationParameter> = {};
   const resources: Record<string, CloudFormationResource> = {};
   const outputs: Record<string, CloudFormationOutput> = {};
+  const diagnostics: string[] = [];
 
   for (const service of services) {
     if (service.type !== 'database') {
@@ -41,6 +42,17 @@ export function mapDatabaseServices(
             .filter((group): group is string => typeof group === 'string')
             .map((group) => ref(group))
         : [];
+      const subnetAvailabilityZones = new Map(
+        services
+          .filter(
+            (candidate) =>
+              candidate.type === 'networking' && candidate.subtype === 'subnet'
+          )
+          .map((candidate) => [
+            logicalId(candidate.id),
+            subnetAvailabilityZone(candidate.config ?? {}),
+          ])
+      );
       const subnetCandidates = services
         .filter(
           (candidate) =>
@@ -52,43 +64,24 @@ export function mapDatabaseServices(
           ref: ref(candidate.id),
           isPublic: candidate.config?.public === true,
         }));
-      const privateFallbackSubnets = subnetCandidates
-        .filter((candidate) => !candidate.isPublic)
-        .map((candidate) => candidate.ref)
-        .filter(
-          (candidateRef, index, allRefs) =>
-            allRefs.findIndex(
-              (item) => JSON.stringify(item) === JSON.stringify(candidateRef)
-            ) === index
-        )
-        .filter(
-          (candidateRef) =>
-            !subnets.some(
-              (configuredSubnet) =>
-                JSON.stringify(configuredSubnet) ===
-                JSON.stringify(candidateRef)
-            )
-        );
-      const anySubnetFallbacks = subnetCandidates
-        .map((candidate) => candidate.ref)
-        .filter(
-          (candidateRef, index, allRefs) =>
-            allRefs.findIndex(
-              (item) => JSON.stringify(item) === JSON.stringify(candidateRef)
-            ) === index
-        )
-        .filter(
-          (candidateRef) =>
-            !subnets.some(
-              (configuredSubnet) =>
-                JSON.stringify(configuredSubnet) ===
-                JSON.stringify(candidateRef)
-            ) &&
-            !privateFallbackSubnets.some(
-              (fallbackSubnet) =>
-                JSON.stringify(fallbackSubnet) === JSON.stringify(candidateRef)
-            )
-        );
+      const seenSubnetRefs = new Set(subnets.map((subnet) => subnet.Ref));
+      const pickUniqueSubnetRefs = (
+        candidates: typeof subnetCandidates
+      ): { Ref: string }[] =>
+        candidates
+          .map((candidate) => candidate.ref)
+          .filter((candidateRef) => {
+            if (seenSubnetRefs.has(candidateRef.Ref)) {
+              return false;
+            }
+
+            seenSubnetRefs.add(candidateRef.Ref);
+            return true;
+          });
+      const privateFallbackSubnets = pickUniqueSubnetRefs(
+        subnetCandidates.filter((candidate) => !candidate.isPublic)
+      );
+      const anySubnetFallbacks = pickUniqueSubnetRefs(subnetCandidates);
       const subnetIds =
         subnets.length >= 2
           ? subnets
@@ -97,6 +90,17 @@ export function mapDatabaseServices(
               ...privateFallbackSubnets,
               ...anySubnetFallbacks,
             ].slice(0, 2);
+      const subnetAvailabilityZoneCount = new Set(
+        subnetIds
+          .map((subnet) => subnetAvailabilityZones.get(subnet.Ref))
+          .filter((zone): zone is string => typeof zone === 'string')
+      ).size;
+
+      if (subnetAvailabilityZoneCount < 2) {
+        diagnostics.push(
+          `RDS service "${service.id}" DBSubnetGroup has fewer than 2 distinct Availability Zones for subnets: ${subnetIds.map((subnet) => subnet.Ref).join(', ') || 'none'}.`
+        );
+      }
 
       parameters[usernameParameter] = {
         Type: 'String',
@@ -202,7 +206,7 @@ export function mapDatabaseServices(
     }
   }
 
-  return { parameters, resources, outputs };
+  return { parameters, resources, outputs, diagnostics };
 }
 
 function logicalId(value: string): string {
@@ -216,6 +220,15 @@ function logicalId(value: string): string {
 
 function ref(value: string): { Ref: string } {
   return { Ref: logicalId(value) };
+}
+
+function subnetAvailabilityZone(config: Record<string, unknown>): string {
+  const availabilityZone =
+    config.availability_zone ?? config.availabilityZone ?? config.az;
+
+  return typeof availabilityZone === 'string' && availabilityZone.length > 0
+    ? availabilityZone
+    : 'us-east-1a';
 }
 
 function parameterRef(name: string): { Ref: string } {

@@ -30,6 +30,7 @@ export interface CloudFormationResourceMapping {
   parameters: Record<string, CloudFormationParameter>;
   resources: Record<string, CloudFormationResource>;
   outputs: Record<string, CloudFormationOutput>;
+  diagnostics?: string[];
 }
 
 export interface CloudFormationGenerationOptions {

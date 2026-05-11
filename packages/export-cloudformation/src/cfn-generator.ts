@@ -19,17 +19,107 @@ import type {
   NormalizedAdacService,
 } from './types/index.js';
 
+type CloudFormationResourceMappingName =
+  | 'mapNetworkingServices'
+  | 'mapComputeServices'
+  | 'mapDatabaseServices';
+
+type NamedCloudFormationResourceMapping = {
+  name: CloudFormationResourceMappingName;
+  mapping: CloudFormationResourceMapping;
+};
+
+type CloudFormationResourceMappingSection =
+  | 'parameters'
+  | 'resources'
+  | 'outputs';
+
+const currentDir = dirname(fileURLToPath(import.meta.url));
+const templatePath = join(currentDir, 'templates', 'template.yaml.hbs');
+const templateContent = readFileSync(templatePath, 'utf8');
+const compiledTemplate = Handlebars.compile(templateContent);
+
+const SUPPORTED_SERVICE_SUBTYPES: Record<string, readonly string[]> = {
+  networking: [
+    'vpc',
+    'subnet',
+    'security-group',
+    'application-load-balancer',
+    'alb',
+  ],
+  compute: ['ec2', 'ecs-fargate', 'lambda'],
+  database: ['rds-postgres', 'dynamodb'],
+};
+
+function mergeMappingSection<T>(
+  mergedSection: Record<string, T>,
+  mappingSection: Record<string, T>,
+  origins: Record<string, string>,
+  mappingName: CloudFormationResourceMappingName,
+  section: CloudFormationResourceMappingSection
+): Record<string, T> {
+  for (const key of Object.keys(mappingSection)) {
+    if (Object.prototype.hasOwnProperty.call(mergedSection, key)) {
+      throw new Error(
+        `Duplicate CloudFormation ${section} key "${key}" emitted by ${mappingName}; already emitted by ${origins[key]}.`
+      );
+    }
+  }
+
+  for (const key of Object.keys(mappingSection)) {
+    origins[key] = mappingName;
+  }
+
+  return { ...mergedSection, ...mappingSection };
+}
+
 function mergeMappings(
-  ...mappings: CloudFormationResourceMapping[]
+  ...mappings: NamedCloudFormationResourceMapping[]
 ): CloudFormationResourceMapping {
-  return mappings.reduce<CloudFormationResourceMapping>(
-    (merged, mapping) => ({
-      parameters: { ...merged.parameters, ...mapping.parameters },
-      resources: { ...merged.resources, ...mapping.resources },
-      outputs: { ...merged.outputs, ...mapping.outputs },
-    }),
-    { parameters: {}, resources: {}, outputs: {} }
-  );
+  const merged: CloudFormationResourceMapping = {
+    parameters: {},
+    resources: {},
+    outputs: {},
+    diagnostics: [],
+  };
+  const origins: Record<
+    CloudFormationResourceMappingSection,
+    Record<string, string>
+  > = {
+    parameters: {},
+    resources: {},
+    outputs: {},
+  };
+
+  for (const { name, mapping } of mappings) {
+    merged.parameters = mergeMappingSection(
+      merged.parameters,
+      mapping.parameters,
+      origins.parameters,
+      name,
+      'parameters'
+    );
+    merged.resources = mergeMappingSection(
+      merged.resources,
+      mapping.resources,
+      origins.resources,
+      name,
+      'resources'
+    );
+    merged.outputs = mergeMappingSection(
+      merged.outputs,
+      mapping.outputs,
+      origins.outputs,
+      name,
+      'outputs'
+    );
+    merged.diagnostics = [
+      ...(merged.diagnostics ?? []),
+      ...(mapping.diagnostics ?? []),
+    ];
+  }
+
+  return merged;
 }
 
 function mapServiceToTypeAndSubtype(
@@ -74,6 +164,28 @@ function mapServiceToTypeAndSubtype(
   return { type: 'unknown', subtype: undefined };
 }
 
+function isSupportedService(service: NormalizedAdacService): boolean {
+  const supportedSubtypes = SUPPORTED_SERVICE_SUBTYPES[service.type];
+
+  return (
+    supportedSubtypes !== undefined &&
+    service.subtype !== undefined &&
+    supportedSubtypes.includes(service.subtype)
+  );
+}
+
+function getUnsupportedServiceDiagnostics(
+  services: NormalizedAdacService[]
+): string[] {
+  return services
+    .filter((service) => !isSupportedService(service))
+    .map((service) => {
+      const subtype = service.subtype ?? 'none';
+
+      return `Unsupported CloudFormation service "${service.id}" with type "${service.type}" and subtype "${subtype}" was not mapped.`;
+    });
+}
+
 function normalizeServicesFromAdac(
   adacConfig: AdacConfig,
   options: CloudFormationFromAdacOptions = {}
@@ -83,10 +195,17 @@ function normalizeServicesFromAdac(
   region: string;
 } {
   const clouds = adacConfig.infrastructure?.clouds ?? [];
-  const selectedCloud =
-    (options.cloudId
-      ? clouds.find((cloud) => cloud.id === options.cloudId)
-      : undefined) ?? clouds[0];
+  const selectedCloud = options.cloudId
+    ? clouds.find((cloud) => cloud.id === options.cloudId)
+    : clouds[0];
+
+  if (options.cloudId && !selectedCloud) {
+    const availableCloudIds = clouds.map((cloud) => cloud.id).join(', ');
+
+    throw new Error(
+      `Cloud "${options.cloudId}" was not found in ADAC config. Available clouds: ${availableCloudIds || 'none'}.`
+    );
+  }
 
   if (!selectedCloud) {
     return {
@@ -99,8 +218,8 @@ function normalizeServicesFromAdac(
   const provider = 'aws';
   const region = options.region ?? selectedCloud.region ?? 'us-east-1';
 
-  const services: NormalizedAdacService[] = (selectedCloud.services ?? [])
-    .map((service) => {
+  const services: NormalizedAdacService[] = (selectedCloud.services ?? []).map(
+    (service) => {
       const record = service as unknown as Record<string, unknown>;
       const mapped = mapServiceToTypeAndSubtype(record);
 
@@ -113,10 +232,33 @@ function normalizeServicesFromAdac(
           (record.config as Record<string, unknown> | undefined) ??
           (record.configuration as Record<string, unknown> | undefined),
       } satisfies NormalizedAdacService;
-    })
-    .filter((service) => service.type !== 'unknown');
+    }
+  );
 
   return { services, provider, region };
+}
+
+function isMultilineString(value: string): boolean {
+  return value.includes('\n') || value.includes('\r');
+}
+
+function quoteYamlString(value: string): string {
+  const escaped = value
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\t/g, '\\t');
+
+  return `"${escaped}"`;
+}
+
+function formatMultilineStringLines(value: string, indent: number): string {
+  const pad = ' '.repeat(indent);
+  const normalized = value.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  return normalized
+    .split('\n')
+    .map((line) => `${pad}${line}`)
+    .join('\n');
 }
 
 function toYaml(value: unknown, indent: number = 0): string {
@@ -131,7 +273,11 @@ function toYaml(value: unknown, indent: number = 0): string {
   }
 
   if (typeof value === 'string') {
-    return `${pad}${JSON.stringify(value)}`;
+    if (isMultilineString(value)) {
+      return `${pad}|\n${formatMultilineStringLines(value, indent + 2)}`;
+    }
+
+    return `${pad}${quoteYamlString(value)}`;
   }
 
   if (typeof value === 'number' || typeof value === 'boolean') {
@@ -153,21 +299,43 @@ function toYaml(value: unknown, indent: number = 0): string {
           }
 
           const [firstKey, firstValue] = entries[0];
-          const firstLine = `${pad}- ${firstKey}:${
-            firstValue !== null && typeof firstValue === 'object'
-              ? `\n${toYaml(firstValue, indent + 4)}`
-              : ` ${toYaml(firstValue, 0).trim()}`
-          }`;
+          const firstLine =
+            typeof firstValue === 'string' && isMultilineString(firstValue)
+              ? `${pad}- ${firstKey}: |\n${formatMultilineStringLines(
+                  firstValue,
+                  indent + 4
+                )}`
+              : `${pad}- ${firstKey}:${
+                  firstValue !== null && typeof firstValue === 'object'
+                    ? `\n${toYaml(firstValue, indent + 4)}`
+                    : ` ${toYaml(firstValue, 0).trim()}`
+                }`;
           const rest = entries
             .slice(1)
-            .map(([key, entryValue]) =>
-              entryValue !== null && typeof entryValue === 'object'
-                ? `${' '.repeat(indent + 2)}${key}:\n${toYaml(entryValue, indent + 4)}`
-                : `${' '.repeat(indent + 2)}${key}: ${toYaml(entryValue, 0).trim()}`
-            )
+            .map(([key, entryValue]) => {
+              const entryPad = ' '.repeat(indent + 2);
+
+              if (
+                typeof entryValue === 'string' &&
+                isMultilineString(entryValue)
+              ) {
+                return `${entryPad}${key}: |\n${formatMultilineStringLines(
+                  entryValue,
+                  indent + 4
+                )}`;
+              }
+
+              return entryValue !== null && typeof entryValue === 'object'
+                ? `${entryPad}${key}:\n${toYaml(entryValue, indent + 4)}`
+                : `${entryPad}${key}: ${toYaml(entryValue, 0).trim()}`;
+            })
             .join('\n');
 
           return rest ? `${firstLine}\n${rest}` : firstLine;
+        }
+
+        if (typeof item === 'string' && isMultilineString(item)) {
+          return `${pad}- |\n${formatMultilineStringLines(item, indent + 2)}`;
         }
 
         return `${pad}- ${toYaml(item, 0).trim()}`;
@@ -185,6 +353,13 @@ function toYaml(value: unknown, indent: number = 0): string {
 
   return entries
     .map(([key, entryValue]) => {
+      if (typeof entryValue === 'string' && isMultilineString(entryValue)) {
+        return `${pad}${key}: |\n${formatMultilineStringLines(
+          entryValue,
+          indent + 2
+        )}`;
+      }
+
       if (
         entryValue !== null &&
         typeof entryValue === 'object' &&
@@ -207,12 +382,6 @@ function buildTemplate(
   computeParameters: string[],
   databaseParameters: string[]
 ): string {
-  const currentDir = dirname(fileURLToPath(import.meta.url));
-  const templatePath = join(currentDir, 'templates', 'template.yaml.hbs');
-  const templateContent = readFileSync(templatePath, 'utf8');
-
-  const compiled = Handlebars.compile(templateContent);
-
   const paramsYaml = Object.keys(parameters).length
     ? toYaml(parameters, 2).trimEnd()
     : '';
@@ -223,14 +392,18 @@ function buildTemplate(
     ? toYaml(outputs, 2).trimEnd()
     : '';
 
-  return compiled({
-    description,
+  return compiledTemplate({
+    descriptionYaml: toYaml(description).trim(),
     parameters: paramsYaml,
     resources: resourcesYaml,
     outputs: outputsYaml,
     networkingParameters,
     computeParameters,
     databaseParameters,
+    hasParameterGroups:
+      networkingParameters.length > 0 ||
+      computeParameters.length > 0 ||
+      databaseParameters.length > 0,
   });
 }
 
@@ -247,10 +420,12 @@ export function generateCloudFormationFromServices(
   const databaseMapping = mapDatabaseServices(services);
 
   const mapping = mergeMappings(
-    networkingMapping,
-    computeMapping,
-    databaseMapping
+    { name: 'mapNetworkingServices', mapping: networkingMapping },
+    { name: 'mapComputeServices', mapping: computeMapping },
+    { name: 'mapDatabaseServices', mapping: databaseMapping }
   );
+  const unsupportedServiceDiagnostics =
+    getUnsupportedServiceDiagnostics(services);
 
   return {
     templateYaml: buildTemplate(
@@ -268,6 +443,8 @@ export function generateCloudFormationFromServices(
       `Generated ${Object.keys(mapping.resources).length} resources`,
       `Generated ${Object.keys(mapping.parameters).length} parameters`,
       `Generated ${Object.keys(mapping.outputs).length} outputs`,
+      ...(mapping.diagnostics ?? []),
+      ...unsupportedServiceDiagnostics,
     ],
   };
 }
