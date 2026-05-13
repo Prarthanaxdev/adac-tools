@@ -80,7 +80,11 @@ export function runCLI(options: CLIOptions) {
   program
     .command('diagram <file>')
     .description('Generate diagram from ADAC YAML file')
-    .option('-l, --layout <type>', 'Layout engine (elk, dagre or custom)', 'elk')
+    .option(
+      '-l, --layout <type>',
+      'Layout engine (elk, dagre or custom)',
+      'elk'
+    )
     .option('-o, --output <path>', 'Output SVG file path')
     .option('--validate', 'Validate schema before generating')
     .option('--cost', 'Print cost breakdown and generate diagram')

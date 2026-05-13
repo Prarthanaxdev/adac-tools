@@ -23,7 +23,10 @@ export function assignCoordinates(
     let maxBreadth = 0;
     nodes.forEach((id) => {
       const node = graph.getNode(id)!;
-      maxBreadth = Math.max(maxBreadth, isHorizontal ? node.width : node.height);
+      maxBreadth = Math.max(
+        maxBreadth,
+        isHorizontal ? node.width : node.height
+      );
     });
     rankBreadth.set(rank, maxBreadth);
   });
@@ -137,9 +140,7 @@ export function assignCoordinates(
     const nodes = ordering.get(rank)!;
     nodes.forEach((id) => {
       const node = graph.getNode(id)!;
-      const extent = isHorizontal
-        ? node.y + node.height
-        : node.x + node.width;
+      const extent = isHorizontal ? node.y + node.height : node.x + node.width;
       globalMax = Math.max(globalMax, extent);
     });
   });

@@ -4,27 +4,15 @@
     "node": true,
     "es2022": true
   },
-  "plugins": [
-    "@typescript-eslint",
-    "unicorn"
-  ],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
-  "ignorePatterns": [
-    "dist/",
-    "node_modules/",
-    "!.github/"
-  ],
+  "plugins": ["@typescript-eslint", "unicorn"],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "ignorePatterns": ["dist/", "node_modules/", "!.github/"],
   "rules": {
     "unicorn/filename-case": [
       "error",
       {
         "case": "kebabCase",
-        "ignore": [
-          "vite-env\\.d\\.ts$"
-        ]
+        "ignore": ["vite-env\\.d\\.ts$"]
       }
     ]
   }

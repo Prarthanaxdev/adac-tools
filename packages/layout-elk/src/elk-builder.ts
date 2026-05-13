@@ -388,21 +388,26 @@ export function buildElkGraph(adac: AdacConfig): ElkNode {
   const isGcp = providers.has('gcp');
   const isAzure = providers.has('azure');
 
-  const estimatedNodeCount = (adac.applications || []).length +
-    (adac.infrastructure?.clouds || [])
-      .reduce((sum, c) => sum + (c.services || []).length, 0);
+  const estimatedNodeCount =
+    (adac.applications || []).length +
+    (adac.infrastructure?.clouds || []).reduce(
+      (sum, c) => sum + (c.services || []).length,
+      0
+    );
   const estimatedEdgeCount = (adac.connections || []).length;
   const isDenseGraph = estimatedNodeCount > 40 || estimatedEdgeCount > 80;
   const edgeRoutingMode = isDenseGraph ? 'SPLINES' : 'ORTHOGONAL';
-  const edgeSpacing = isDenseGraph ? {
-    nodeNodeBetweenLayers: '140',
-    edgeNodeBetweenLayers: '80',
-    edgeEdgeBetweenLayers: '60',
-  } : {
-    nodeNodeBetweenLayers: '100',
-    edgeNodeBetweenLayers: '40',
-    edgeEdgeBetweenLayers: '20',
-  };
+  const edgeSpacing = isDenseGraph
+    ? {
+        nodeNodeBetweenLayers: '140',
+        edgeNodeBetweenLayers: '80',
+        edgeEdgeBetweenLayers: '60',
+      }
+    : {
+        nodeNodeBetweenLayers: '100',
+        edgeNodeBetweenLayers: '40',
+        edgeEdgeBetweenLayers: '20',
+      };
   const getIconPath = (
     key: string,
     forceProvider?: 'aws' | 'gcp' | 'azure'
@@ -1084,10 +1089,13 @@ export function buildElkGraph(adac: AdacConfig): ElkNode {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.edgeRouting': edgeRoutingMode,
 
-      'elk.layered.spacing.nodeNodeBetweenLayers': edgeSpacing.nodeNodeBetweenLayers,
+      'elk.layered.spacing.nodeNodeBetweenLayers':
+        edgeSpacing.nodeNodeBetweenLayers,
       'elk.spacing.nodeNode': '80',
-      'elk.layered.spacing.edgeNodeBetweenLayers': edgeSpacing.edgeNodeBetweenLayers,
-      'elk.layered.spacing.edgeEdgeBetweenLayers': edgeSpacing.edgeEdgeBetweenLayers,
+      'elk.layered.spacing.edgeNodeBetweenLayers':
+        edgeSpacing.edgeNodeBetweenLayers,
+      'elk.layered.spacing.edgeEdgeBetweenLayers':
+        edgeSpacing.edgeEdgeBetweenLayers,
 
       'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
       'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',

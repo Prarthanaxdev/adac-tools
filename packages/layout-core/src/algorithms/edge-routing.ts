@@ -15,11 +15,18 @@ export function routeEdges(
   const isHorizontal = options.rankdir === 'LR';
 
   // ── Pre-compute node bounding boxes for collision detection ──
-  const boxes: { id: string; x: number; y: number; r: number; b: number }[] = [];
+  const boxes: { id: string; x: number; y: number; r: number; b: number }[] =
+    [];
   for (const [id, pos] of Object.entries(positions)) {
     const node = graph.getNode(id);
     if (node && !node.isVirtual) {
-      boxes.push({ id, x: pos.x, y: pos.y, r: pos.x + pos.width, b: pos.y + pos.height });
+      boxes.push({
+        id,
+        x: pos.x,
+        y: pos.y,
+        r: pos.x + pos.width,
+        b: pos.y + pos.height,
+      });
     }
   }
 
@@ -46,7 +53,7 @@ export function routeEdges(
     outUsed.set(id, used + 1);
 
     const spacing = Math.min(18, faceLength / (total + 1));
-    return (used + 1) * spacing - (total + 1) * spacing / 2;
+    return (used + 1) * spacing - ((total + 1) * spacing) / 2;
   }
 
   function nextInPort(id: string, faceLength: number): number {
@@ -55,7 +62,7 @@ export function routeEdges(
     inUsed.set(id, used + 1);
 
     const spacing = Math.min(18, faceLength / (total + 1));
-    return (used + 1) * spacing - (total + 1) * spacing / 2;
+    return (used + 1) * spacing - ((total + 1) * spacing) / 2;
   }
 
   /**
@@ -63,13 +70,22 @@ export function routeEdges(
    * any node box (excluding `skipIds`).  Returns the colliding box or null.
    */
   function hitsHorizontal(
-    y: number, x1: number, x2: number, skipIds: Set<string>, margin: number
-  ): typeof boxes[0] | null {
+    y: number,
+    x1: number,
+    x2: number,
+    skipIds: Set<string>,
+    margin: number
+  ): (typeof boxes)[0] | null {
     const lo = Math.min(x1, x2);
     const hi = Math.max(x1, x2);
     for (const box of boxes) {
       if (skipIds.has(box.id)) continue;
-      if (y > box.y - margin && y < box.b + margin && hi > box.x - margin && lo < box.r + margin) {
+      if (
+        y > box.y - margin &&
+        y < box.b + margin &&
+        hi > box.x - margin &&
+        lo < box.r + margin
+      ) {
         return box;
       }
     }
@@ -81,13 +97,22 @@ export function routeEdges(
    * any node box (excluding `skipIds`).  Returns the colliding box or null.
    */
   function hitsVertical(
-    x: number, y1: number, y2: number, skipIds: Set<string>, margin: number
-  ): typeof boxes[0] | null {
+    x: number,
+    y1: number,
+    y2: number,
+    skipIds: Set<string>,
+    margin: number
+  ): (typeof boxes)[0] | null {
     const lo = Math.min(y1, y2);
     const hi = Math.max(y1, y2);
     for (const box of boxes) {
       if (skipIds.has(box.id)) continue;
-      if (x > box.x - margin && x < box.r + margin && hi > box.y - margin && lo < box.b + margin) {
+      if (
+        x > box.x - margin &&
+        x < box.r + margin &&
+        hi > box.y - margin &&
+        lo < box.b + margin
+      ) {
         return box;
       }
     }
@@ -98,7 +123,11 @@ export function routeEdges(
    * Nudge a horizontal midline `y` to avoid all collisions along [x1..x2].
    */
   function clearHorizontalY(
-    y: number, x1: number, x2: number, skipIds: Set<string>, margin: number
+    y: number,
+    x1: number,
+    x2: number,
+    skipIds: Set<string>,
+    margin: number
   ): number {
     for (let pass = 0; pass < 8; pass++) {
       const hit = hitsHorizontal(y, x1, x2, skipIds, margin);
@@ -115,7 +144,11 @@ export function routeEdges(
    * Nudge a vertical midline `x` to avoid all collisions along [y1..y2].
    */
   function clearVerticalX(
-    x: number, y1: number, y2: number, skipIds: Set<string>, margin: number
+    x: number,
+    y1: number,
+    y2: number,
+    skipIds: Set<string>,
+    margin: number
   ): number {
     for (let pass = 0; pass < 8; pass++) {
       const hit = hitsVertical(x, y1, y2, skipIds, margin);
@@ -144,16 +177,28 @@ export function routeEdges(
         if (i === 0) {
           // Start from the exit face of the source
           if (isHorizontal) {
-            points.push({ x: Math.round(node.x + node.width), y: Math.round(node.y + node.height / 2) });
+            points.push({
+              x: Math.round(node.x + node.width),
+              y: Math.round(node.y + node.height / 2),
+            });
           } else {
-            points.push({ x: Math.round(node.x + node.width / 2), y: Math.round(node.y + node.height) });
+            points.push({
+              x: Math.round(node.x + node.width / 2),
+              y: Math.round(node.y + node.height),
+            });
           }
         } else if (i === path.length - 1) {
           // End at the entry face of the target
           if (isHorizontal) {
-            points.push({ x: Math.round(node.x), y: Math.round(node.y + node.height / 2) });
+            points.push({
+              x: Math.round(node.x),
+              y: Math.round(node.y + node.height / 2),
+            });
           } else {
-            points.push({ x: Math.round(node.x + node.width / 2), y: Math.round(node.y) });
+            points.push({
+              x: Math.round(node.x + node.width / 2),
+              y: Math.round(node.y),
+            });
           }
         } else {
           // Virtual node — use its center as a waypoint
@@ -183,7 +228,13 @@ export function routeEdges(
 
         if (startY !== endY) {
           const preferredMidX = Math.round((startX + endX) / 2);
-          const midX = clearVerticalX(preferredMidX, Math.min(startY, endY), Math.max(startY, endY), skipIds, MARGIN);
+          const midX = clearVerticalX(
+            preferredMidX,
+            Math.min(startY, endY),
+            Math.max(startY, endY),
+            skipIds,
+            MARGIN
+          );
           points.push({ x: midX, y: startY });
           points.push({ x: midX, y: endY });
         }
@@ -205,7 +256,13 @@ export function routeEdges(
 
         if (startX !== endX) {
           const preferredMidY = Math.round((startY + endY) / 2);
-          const midY = clearHorizontalY(preferredMidY, Math.min(startX, endX), Math.max(startX, endX), skipIds, MARGIN);
+          const midY = clearHorizontalY(
+            preferredMidY,
+            Math.min(startX, endX),
+            Math.max(startX, endX),
+            skipIds,
+            MARGIN
+          );
           points.push({ x: startX, y: midY });
           points.push({ x: endX, y: midY });
         }
@@ -217,7 +274,11 @@ export function routeEdges(
     // Remove consecutive duplicate points
     const cleaned: { x: number; y: number }[] = [];
     for (const pt of points) {
-      if (cleaned.length === 0 || cleaned[cleaned.length - 1].x !== pt.x || cleaned[cleaned.length - 1].y !== pt.y) {
+      if (
+        cleaned.length === 0 ||
+        cleaned[cleaned.length - 1].x !== pt.x ||
+        cleaned[cleaned.length - 1].y !== pt.y
+      ) {
         cleaned.push(pt);
       }
     }

@@ -191,17 +191,20 @@ async function main() {
     // 2. Try manual overrides for tricky names
     if (!foundFile) {
       const overrides: Record<string, string> = {
-        'Azure Kubernetes Service': '10023-icon-service-Kubernetes-Services.svg',
+        'Azure Kubernetes Service':
+          '10023-icon-service-Kubernetes-Services.svg',
         'Azure Functions': '10029-icon-service-Function-Apps.svg',
         'Azure SQL Database': '10130-icon-service-SQL-Database.svg',
         'Microsoft Entra ID': '10221-icon-service-Azure-Active-Directory.svg',
-        'Azure Active Directory': '10221-icon-service-Azure-Active-Directory.svg',
+        'Azure Active Directory':
+          '10221-icon-service-Azure-Active-Directory.svg',
         'Azure Blob Storage': '10086-icon-service-Storage-Accounts.svg',
         'Azure Storage Account': '10086-icon-service-Storage-Accounts.svg',
         'Azure Load Balancer': '10062-icon-service-Load-Balancers.svg',
         'Azure DNS': '10064-icon-service-DNS-Zones.svg',
         'Azure CDN': '10073-icon-service-Front-Door-and-CDN-Profiles.svg',
-        'Azure Front Door': '10073-icon-service-Front-Door-and-CDN-Profiles.svg',
+        'Azure Front Door':
+          '10073-icon-service-Front-Door-and-CDN-Profiles.svg',
         'Azure ExpressRoute': '10079-icon-service-ExpressRoute-Circuits.svg',
         'Azure Bastion': '02422-icon-service-Bastions.svg',
         'VPN Gateway': '10063-icon-service-Virtual-Network-Gateways.svg',
@@ -210,9 +213,11 @@ async function main() {
         'Azure Event Grid': '10206-icon-service-Event-Grid-Topics.svg',
         'Azure Event Hubs': '00039-icon-service-Event-Hubs.svg',
         'Azure Logic Apps': '02631-icon-service-Logic-Apps.svg',
-        'Azure API Management': '10042-icon-service-API-Management-Services.svg',
+        'Azure API Management':
+          '10042-icon-service-API-Management-Services.svg',
         'Azure Data Factory': '10126-icon-service-Data-Factories.svg',
-        'Azure Stream Analytics': '00042-icon-service-Stream-Analytics-Jobs.svg',
+        'Azure Stream Analytics':
+          '00042-icon-service-Stream-Analytics-Jobs.svg',
         'Azure HDInsight': '10142-icon-service-HD-Insight-Clusters.svg',
         'Azure Analysis Services': '10148-icon-service-Analysis-Services.svg',
         'Azure Machine Learning': '10166-icon-service-Machine-Learning.svg',
@@ -223,13 +228,15 @@ async function main() {
         'Azure AI Studio': '03513-icon-service-AI-Studio.svg',
         'Azure Key Vault': '10245-icon-service-Key-Vaults.svg',
         'Microsoft Sentinel': '10248-icon-service-Azure-Sentinel.svg',
-        'Azure Log Analytics': '00009-icon-service-Log-Analytics-Workspaces.svg',
+        'Azure Log Analytics':
+          '00009-icon-service-Log-Analytics-Workspaces.svg',
         'Azure Policy': '10316-icon-service-Policy.svg',
         'Azure Automation': '00022-icon-service-Automation-Accounts.svg',
         'Azure Advisor': '00003-icon-service-Advisor.svg',
         'Azure Repos': '10787-icon-service-Code.svg',
         'Azure Pipelines': '10785-icon-service-Builds.svg',
-        'Azure Container Registry': '10105-icon-service-Container-Registries.svg',
+        'Azure Container Registry':
+          '10105-icon-service-Container-Registries.svg',
         'Azure Artifacts': '10800-icon-service-File.svg',
         'Azure SignalR Service': '10052-icon-service-SignalR.svg',
         'Azure Static Web Apps': '01007-icon-service-Static-Apps.svg',

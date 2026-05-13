@@ -4,10 +4,6 @@ import { type ElkNode, type ElkEdge } from '@mindfiredigital/adac-layout-elk';
 import { layoutDagre } from '@mindfiredigital/adac-layout-dagre';
 import { createLayoutEngine } from '@mindfiredigital/adac-layout';
 
-
-
-
-
 const CSS_STYLES = `
   /* ── Design Tokens ──────────────────────────────────── */
   :root {
@@ -381,11 +377,11 @@ export async function renderSvg(
     // when there are many siblings. Cross-container edges are
     // routed using absolute node positions with orthogonal paths.
 
-    const CONTAINER_PAD = 48;   // padding inside container boundaries
-    const CONTAINER_TOP = 44;   // extra top padding for label strip
-    const MAX_COLS = 4;         // max children per row before wrapping
-    const NODE_GAP_X = 56;     // horizontal gap between children
-    const NODE_GAP_Y = 80;     // vertical gap between rows
+    const CONTAINER_PAD = 48; // padding inside container boundaries
+    const CONTAINER_TOP = 44; // extra top padding for label strip
+    const MAX_COLS = 4; // max children per row before wrapping
+    const NODE_GAP_X = 56; // horizontal gap between children
+    const NODE_GAP_Y = 80; // vertical gap between rows
 
     // Collect ALL original edges from every level for rendering later
     const allOriginalEdges: ElkEdge[] = [];
@@ -420,7 +416,7 @@ export async function renderSvg(
       }
 
       // Check if there are any local edges between direct children
-      const childIds = new Set(laidOutChildren.map(c => c.id));
+      const childIds = new Set(laidOutChildren.map((c) => c.id));
       const localEdges: ElkEdge[] = [];
       if (node.edges) {
         for (const edge of node.edges) {
@@ -451,10 +447,14 @@ export async function renderSvg(
         }
 
         const result = await engine.layout();
-        positionedChildren = laidOutChildren.map(child => {
+        positionedChildren = laidOutChildren.map((child) => {
           const pos = result.nodes[child.id];
           if (pos) {
-            return { ...child, x: pos.x + CONTAINER_PAD, y: pos.y + CONTAINER_TOP };
+            return {
+              ...child,
+              x: pos.x + CONTAINER_PAD,
+              y: pos.y + CONTAINER_TOP,
+            };
           }
           return child;
         });
@@ -492,8 +492,9 @@ export async function renderSvg(
       }
 
       // Compute container size from children bounds
-      let maxX = 0, maxY = 0;
-      positionedChildren.forEach(child => {
+      let maxX = 0,
+        maxY = 0;
+      positionedChildren.forEach((child) => {
         maxX = Math.max(maxX, (child.x || 0) + (child.width || 0));
         maxY = Math.max(maxY, (child.y || 0) + (child.height || 0));
       });
@@ -511,31 +512,46 @@ export async function renderSvg(
     layout.properties = graph.properties;
 
     // ── Build absolute positions for every node ──
-    const absPositions = new Map<string, { x: number; y: number; w: number; h: number }>();
+    const absPositions = new Map<
+      string,
+      { x: number; y: number; w: number; h: number }
+    >();
     const buildAbsPositions = (n: ElkNode, ox: number, oy: number) => {
       const ax = ox + (n.x || 0);
       const ay = oy + (n.y || 0);
-      absPositions.set(n.id, { x: ax, y: ay, w: n.width || 0, h: n.height || 0 });
-      n.children?.forEach(c => buildAbsPositions(c, ax, ay));
+      absPositions.set(n.id, {
+        x: ax,
+        y: ay,
+        w: n.width || 0,
+        h: n.height || 0,
+      });
+      n.children?.forEach((c) => buildAbsPositions(c, ax, ay));
     };
     buildAbsPositions(layout, 0, 0);
 
     // ── Collect LEAF node bounding boxes for collision avoidance ──
     // Only leaf nodes (no children) are obstacles — containers are not,
     // because edges legitimately pass through container boundaries.
-    const leafNodeBoxes: { id: string; x: number; y: number; r: number; b: number }[] = [];
+    const leafNodeBoxes: {
+      id: string;
+      x: number;
+      y: number;
+      r: number;
+      b: number;
+    }[] = [];
     const collectLeafBoxes = (n: ElkNode, ox: number, oy: number) => {
       const ax = ox + (n.x || 0);
       const ay = oy + (n.y || 0);
       if (!n.children || n.children.length === 0) {
         leafNodeBoxes.push({
           id: n.id,
-          x: ax, y: ay,
+          x: ax,
+          y: ay,
           r: ax + (n.width || 0),
           b: ay + (n.height || 0),
         });
       }
-      n.children?.forEach(c => collectLeafBoxes(c, ax, ay));
+      n.children?.forEach((c) => collectLeafBoxes(c, ax, ay));
     };
     collectLeafBoxes(layout, 0, 0);
 
@@ -543,7 +559,7 @@ export async function renderSvg(
     const parentChain = new Map<string, string>();
     const buildParentChain = (n: ElkNode, parentId?: string) => {
       if (parentId) parentChain.set(n.id, parentId);
-      n.children?.forEach(c => buildParentChain(c, n.id));
+      n.children?.forEach((c) => buildParentChain(c, n.id));
     };
     buildParentChain(layout);
 
@@ -551,7 +567,10 @@ export async function renderSvg(
      * Find ALL horizontal collisions for a segment at Y between x1..x2
      */
     const findAllHorizontalCollisions = (
-      y: number, x1: number, x2: number, skipIds: Set<string>,
+      y: number,
+      x1: number,
+      x2: number,
+      skipIds: Set<string>,
       margin: number = 4
     ): typeof leafNodeBoxes => {
       const lo = Math.min(x1, x2);
@@ -559,7 +578,12 @@ export async function renderSvg(
       const results: typeof leafNodeBoxes = [];
       for (const box of leafNodeBoxes) {
         if (skipIds.has(box.id)) continue;
-        if (y > box.y - margin && y < box.b + margin && hi > box.x - margin && lo < box.r + margin) {
+        if (
+          y > box.y - margin &&
+          y < box.b + margin &&
+          hi > box.x - margin &&
+          lo < box.r + margin
+        ) {
           results.push(box);
         }
       }
@@ -570,7 +594,10 @@ export async function renderSvg(
      * Find ALL vertical collisions for a segment at X between y1..y2
      */
     const findAllVerticalCollisions = (
-      x: number, y1: number, y2: number, skipIds: Set<string>,
+      x: number,
+      y1: number,
+      y2: number,
+      skipIds: Set<string>,
       margin: number = 4
     ): typeof leafNodeBoxes => {
       const lo = Math.min(y1, y2);
@@ -578,7 +605,12 @@ export async function renderSvg(
       const results: typeof leafNodeBoxes = [];
       for (const box of leafNodeBoxes) {
         if (skipIds.has(box.id)) continue;
-        if (x > box.x - margin && x < box.r + margin && hi > box.y - margin && lo < box.b + margin) {
+        if (
+          x > box.x - margin &&
+          x < box.r + margin &&
+          hi > box.y - margin &&
+          lo < box.b + margin
+        ) {
           results.push(box);
         }
       }
@@ -591,8 +623,12 @@ export async function renderSvg(
      * passes) in case the rerouted Y itself collides with other nodes.
      */
     const findClearHorizontalY = (
-      preferredY: number, x1: number, x2: number,
-      skipIds: Set<string>, yFloor: number, yCeil: number,
+      preferredY: number,
+      x1: number,
+      x2: number,
+      skipIds: Set<string>,
+      yFloor: number,
+      yCeil: number,
       margin: number = EDGE_MARGIN
     ): number => {
       let y = preferredY;
@@ -600,7 +636,8 @@ export async function renderSvg(
         const cols = findAllHorizontalCollisions(y, x1, x2, skipIds, margin);
         if (cols.length === 0) return y;
         // Find the topmost and bottommost collision
-        let topmost = Infinity, bottommost = -Infinity;
+        let topmost = Infinity,
+          bottommost = -Infinity;
         for (const c of cols) {
           topmost = Math.min(topmost, c.y);
           bottommost = Math.max(bottommost, c.b);
@@ -624,15 +661,19 @@ export async function renderSvg(
      * node across the y-range. Uses iterative re-checking.
      */
     const findClearVerticalX = (
-      preferredX: number, y1: number, y2: number,
-      skipIds: Set<string>, goRight: boolean,
+      preferredX: number,
+      y1: number,
+      y2: number,
+      skipIds: Set<string>,
+      goRight: boolean,
       margin: number = EDGE_MARGIN
     ): number => {
       let x = preferredX;
       for (let pass = 0; pass < 5; pass++) {
         const cols = findAllVerticalCollisions(x, y1, y2, skipIds, margin);
         if (cols.length === 0) return x;
-        let leftmost = Infinity, rightmost = -Infinity;
+        let leftmost = Infinity,
+          rightmost = -Infinity;
         for (const c of cols) {
           leftmost = Math.min(leftmost, c.x);
           rightmost = Math.max(rightmost, c.r);
@@ -675,9 +716,9 @@ export async function renderSvg(
       addParentChain(srcId);
       addParentChain(tgtId);
 
-      let startPt: {x:number; y:number};
-      let endPt: {x:number; y:number};
-      let bendPoints: {x:number; y:number}[];
+      let startPt: { x: number; y: number };
+      let endPt: { x: number; y: number };
+      let bendPoints: { x: number; y: number }[];
 
       const srcBot = srcPos.y + srcPos.h;
       const srcTop = srcPos.y;
@@ -692,14 +733,30 @@ export async function renderSvg(
         // Find clear horizontal Y for the crossover
         const preferredMidY = (srcBot + tgtTop) / 2 + jitter;
         const midY = findClearHorizontalY(
-          preferredMidY, Math.min(srcCx, tgtCx), Math.max(srcCx, tgtCx),
-          skipIds, srcBot, tgtTop
+          preferredMidY,
+          Math.min(srcCx, tgtCx),
+          Math.max(srcCx, tgtCx),
+          skipIds,
+          srcBot,
+          tgtTop
         );
 
         // Check vertical segments for collision and route around if needed
         const srcGoRight = tgtCx > srcCx;
-        const clearSrcX = findClearVerticalX(srcCx, srcBot, midY, skipIds, srcGoRight);
-        const clearTgtX = findClearVerticalX(tgtCx, midY, tgtTop, skipIds, srcGoRight);
+        const clearSrcX = findClearVerticalX(
+          srcCx,
+          srcBot,
+          midY,
+          skipIds,
+          srcGoRight
+        );
+        const clearTgtX = findClearVerticalX(
+          tgtCx,
+          midY,
+          tgtTop,
+          skipIds,
+          srcGoRight
+        );
 
         if (clearSrcX !== srcCx || clearTgtX !== tgtCx) {
           // Need extra bends to avoid vertical collisions
@@ -723,7 +780,6 @@ export async function renderSvg(
             { x: tgtCx, y: midY },
           ];
         }
-
       } else if (srcTop > tgtBot - 10) {
         // ─── Target is ABOVE source ───
         startPt = { x: srcCx, y: srcTop - 2 };
@@ -731,13 +787,29 @@ export async function renderSvg(
 
         const preferredMidY = (tgtBot + srcTop) / 2 + jitter;
         const midY = findClearHorizontalY(
-          preferredMidY, Math.min(srcCx, tgtCx), Math.max(srcCx, tgtCx),
-          skipIds, tgtBot, srcTop
+          preferredMidY,
+          Math.min(srcCx, tgtCx),
+          Math.max(srcCx, tgtCx),
+          skipIds,
+          tgtBot,
+          srcTop
         );
 
         const goRight = tgtCx > srcCx;
-        const clearSrcX = findClearVerticalX(srcCx, midY, srcTop, skipIds, goRight);
-        const clearTgtX = findClearVerticalX(tgtCx, tgtBot, midY, skipIds, goRight);
+        const clearSrcX = findClearVerticalX(
+          srcCx,
+          midY,
+          srcTop,
+          skipIds,
+          goRight
+        );
+        const clearTgtX = findClearVerticalX(
+          tgtCx,
+          tgtBot,
+          midY,
+          skipIds,
+          goRight
+        );
 
         if (clearSrcX !== srcCx || clearTgtX !== tgtCx) {
           bendPoints = [
@@ -759,29 +831,45 @@ export async function renderSvg(
             { x: tgtCx, y: midY },
           ];
         }
-
       } else {
         // ─── Same vertical level → horizontal routing ───
         const goRight = tgtCx > srcCx;
 
-        startPt = { x: goRight ? srcPos.x + srcPos.w + 2 : srcPos.x - 2, y: srcCy };
-        endPt = { x: goRight ? tgtPos.x - 2 : tgtPos.x + tgtPos.w + 2, y: tgtCy };
+        startPt = {
+          x: goRight ? srcPos.x + srcPos.w + 2 : srcPos.x - 2,
+          y: srcCy,
+        };
+        endPt = {
+          x: goRight ? tgtPos.x - 2 : tgtPos.x + tgtPos.w + 2,
+          y: tgtCy,
+        };
 
         // Find clear vertical X for the crossover
         const preferredMidX = (srcCx + tgtCx) / 2 + jitter;
         const midX = findClearVerticalX(
-          preferredMidX, Math.min(srcCy, tgtCy), Math.max(srcCy, tgtCy),
-          skipIds, goRight
+          preferredMidX,
+          Math.min(srcCy, tgtCy),
+          Math.max(srcCy, tgtCy),
+          skipIds,
+          goRight
         );
 
         // Check if horizontal segments collide
         const clearSrcY = findClearHorizontalY(
-          srcCy, startPt.x, midX, skipIds,
-          srcPos.y - 50, srcPos.y + srcPos.h + 50
+          srcCy,
+          startPt.x,
+          midX,
+          skipIds,
+          srcPos.y - 50,
+          srcPos.y + srcPos.h + 50
         );
         const clearTgtY = findClearHorizontalY(
-          tgtCy, midX, endPt.x, skipIds,
-          tgtPos.y - 50, tgtPos.y + tgtPos.h + 50
+          tgtCy,
+          midX,
+          endPt.x,
+          skipIds,
+          tgtPos.y - 50,
+          tgtPos.y + tgtPos.h + 50
         );
 
         if (clearSrcY !== srcCy || clearTgtY !== tgtCy) {
@@ -800,12 +888,14 @@ export async function renderSvg(
         sources: [srcId],
         targets: [tgtId],
         labels: origEdge.labels,
-        sections: [{
-          id: `global-s${idx}`,
-          startPoint: startPt,
-          endPoint: endPt,
-          bendPoints,
-        }],
+        sections: [
+          {
+            id: `global-s${idx}`,
+            startPoint: startPt,
+            endPoint: endPt,
+            bendPoints,
+          },
+        ],
       });
     });
 
@@ -901,12 +991,18 @@ export async function renderSvg(
 
   const nodeAbsPos = new Map<string, { x: number; y: number }>();
   const parentMap = new Map<string, string>();
-  const mapNodePositions = (n: ElkNode, ox: number, oy: number, pid?: string) => {
+  const mapNodePositions = (
+    n: ElkNode,
+    ox: number,
+    oy: number,
+    pid?: string
+  ) => {
     const cx = ox + (n.x || 0),
       cy = oy + (n.y || 0);
     nodeAbsPos.set(n.id, { x: cx, y: cy });
     if (pid) parentMap.set(n.id, pid);
-    if (n.children) n.children.forEach((c) => mapNodePositions(c, cx, cy, n.id));
+    if (n.children)
+      n.children.forEach((c) => mapNodePositions(c, cx, cy, n.id));
   };
   mapNodePositions(layout, 0, 0);
 
@@ -917,10 +1013,10 @@ export async function renderSvg(
       n.edges.forEach((e) => {
         if (e.id && processedEdgeIds.has(e.id)) return;
         if (e.id) processedEdgeIds.add(e.id);
-        
+
         let containerOffset = { x: 0, y: 0 };
         let currentContainerId = e.container || n.id;
-        
+
         while (currentContainerId) {
           const pos = nodeAbsPos.get(currentContainerId);
           if (pos) {
@@ -955,14 +1051,14 @@ export async function renderSvg(
   const defaultEdgeClass = rootCssProp.includes('gcp')
     ? 'gcp-edge'
     : rootCssProp.includes('azure')
-    ? 'azure-edge'
-    : 'aws-edge';
+      ? 'azure-edge'
+      : 'aws-edge';
 
   const defaultArrow = rootCssProp.includes('gcp')
     ? 'url(#arrow-gcp)'
     : rootCssProp.includes('azure')
-    ? 'url(#arrow-azure)'
-    : 'url(#arrow)';
+      ? 'url(#arrow-azure)'
+      : 'url(#arrow)';
 
   const edgesOutput = allEdges
     .map((e) => {
@@ -972,7 +1068,7 @@ export async function renderSvg(
           s.bendPoints?.forEach((b) => (d += ` L ${b.x} ${b.y}`));
           d += ` L ${s.endPoint.x} ${s.endPoint.y}`;
           let edgeSvg = `<path d="${d}" class="${defaultEdgeClass}" marker-end="${defaultArrow}"/>`;
-          
+
           // Add edge label if available
           const edgeLabel = e.labels?.[0]?.text;
           if (edgeLabel) {
@@ -1014,7 +1110,7 @@ export async function renderSvg(
       ny = node.y || 0,
       nw = node.width || 0,
       nh = node.height || 0;
-    
+
     const absX = nx + offsetX;
     const absY = ny + offsetY;
 
@@ -1065,22 +1161,30 @@ export async function renderSvg(
     if (props.type === 'container') {
       // Determine provider from cssClass
       const css = (props.cssClass || '') as string;
-      const isGcpCont  = css.includes('gcp');
+      const isGcpCont = css.includes('gcp');
       const isAzureCont = css.includes('azure');
 
       const labelCls = isAzureCont
         ? 'azure-container-label'
         : isGcpCont
-        ? 'gcp-container-label'
-        : 'aws-container-label';
+          ? 'gcp-container-label'
+          : 'aws-container-label';
 
-      let rectClass = 'aws-container';
+      let rectClass = isGcpCont
+        ? 'gcp-container'
+        : isAzureCont
+          ? 'azure-container'
+          : 'aws-container';
       if (props.cssClass) rectClass += ` ${props.cssClass}`;
-      // Note: complianceClass isn't defined here but exists in user logic, 
+      // Note: complianceClass isn't defined here but exists in user logic,
       // I'll check if I need to calculate it. For now following prompt.
       // (Checking original code... it wasn't there but I'll add the hook)
       const comp = complianceTooltipMap?.[nodeId];
-      const complianceClass = comp ? (comp.violations.length > 0 ? 'compliance-fail' : 'compliance-ok') : '';
+      const complianceClass = comp
+        ? comp.violations.length > 0
+          ? 'compliance-fail'
+          : 'compliance-ok'
+        : '';
       if (complianceClass) rectClass += ` ${complianceClass}`;
 
       const r = 14; // corner radius — consistent across all containers
@@ -1103,9 +1207,10 @@ export async function renderSvg(
       const maxLabelW = nw - 56; // leave room for icon on right
       const charW = 6.5;
       const maxChars = Math.floor(maxLabelW / charW);
-      const displayLabel = label.length > maxChars + 2
-        ? label.substring(0, maxChars).trim() + '…'
-        : label;
+      const displayLabel =
+        label.length > maxChars + 2
+          ? label.substring(0, maxChars).trim() + '…'
+          : label;
 
       output += `<text 
         x="${absX + 14}" y="${absY + 20}" 
@@ -1125,13 +1230,17 @@ export async function renderSvg(
       }
     } else {
       const comp = complianceTooltipMap?.[nodeId];
-      const complianceClass = comp ? (comp.violations.length > 0 ? 'compliance-fail' : 'compliance-ok') : '';
+      const complianceClass = comp
+        ? comp.violations.length > 0
+          ? 'compliance-fail'
+          : 'compliance-ok'
+        : '';
 
       // ── Constants ──────────────────────────────────────
-      const ICON_SIZE  = 42;   // icon image size in px
-      const ICON_BG_PAD = 5;   // padding around icon background
-      const CARD_W     = nw;
-      const CARD_H     = nh;
+      const ICON_SIZE = 42; // icon image size in px
+      const ICON_BG_PAD = 5; // padding around icon background
+      const CARD_W = nw;
+      const CARD_H = nh;
 
       // Icon centered horizontally
       const iconX = absX + Math.round((CARD_W - ICON_SIZE) / 2);
@@ -1142,13 +1251,13 @@ export async function renderSvg(
 
       // Provider detection for label class
       const rootCss = (layout.properties?.cssClass || '') as string;
-      const isGcpLeaf   = rootCss.includes('gcp');
+      const isGcpLeaf = rootCss.includes('gcp');
       const isAzureLeaf = rootCss.includes('azure');
       const nodeLabelCls = isAzureLeaf
         ? 'azure-node-label'
         : isGcpLeaf
-        ? 'gcp-node-label'
-        : 'aws-node-label';
+          ? 'gcp-node-label'
+          : 'aws-node-label';
 
       // Compliance + base class
       let cardClass = 'node-card';
@@ -1198,11 +1307,11 @@ export async function renderSvg(
 
       // ── Cost badge (bottom-right, only if cost exists) ──
       if (cost !== undefined) {
-        const badgeTxt  = `$${cost.toFixed(2)}`;
-        const badgeW    = badgeTxt.length * 5.5 + 8;
-        const badgeH    = 14;
-        const badgeX    = absX + CARD_W - badgeW - 4;
-        const badgeY    = absY + CARD_H - badgeH - 4;
+        const badgeTxt = `$${cost.toFixed(2)}`;
+        const badgeW = badgeTxt.length * 5.5 + 8;
+        const badgeH = 14;
+        const badgeX = absX + CARD_W - badgeW - 4;
+        const badgeY = absY + CARD_H - badgeH - 4;
         output += `<rect 
           x="${badgeX}" y="${badgeY}" 
           width="${badgeW}" height="${badgeH}" 
@@ -1274,7 +1383,9 @@ export async function renderSvg(
 
   const provider = getProvider(layout);
   const rootRect = `<rect width="${width}" height="${height}" class="${provider}-root" />`;
-  const nodesOutput = (layout.children || []).map(n => renderNode(n)).join('');
+  const nodesOutput = (layout.children || [])
+    .map((n) => renderNode(n))
+    .join('');
 
   // ── Legend ──
   const renderLegend = () => {
@@ -1282,7 +1393,12 @@ export async function renderSvg(
     const LEGEND_H = 80;
     const LX = width - LEGEND_W - 20;
     const LY = height - LEGEND_H - 20;
-    const edgeColor = provider === 'gcp' ? '#4285F4' : provider === 'azure' ? '#0078D4' : '#8FA3BF';
+    const edgeColor =
+      provider === 'gcp'
+        ? '#4285F4'
+        : provider === 'azure'
+          ? '#0078D4'
+          : '#8FA3BF';
     const items = [
       { color: edgeColor, label: 'Relationship' },
       { color: '#16A34A', label: 'Compliant' },

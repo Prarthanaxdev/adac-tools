@@ -75,19 +75,21 @@ export class ElkLayoutEngine implements LayoutEngine {
     const edgeCount = this.edges.length;
     const isDenseGraph = nodeCount > 40 || edgeCount > 80;
     const edgeRoutingMode = isDenseGraph ? 'SPLINES' : 'ORTHOGONAL';
-    const spacing = isDenseGraph ? {
-      nodeNodeBetweenLayers: '140',
-      edgeNodeBetweenLayers: '80',
-      edgeEdgeBetweenLayers: '60',
-      componentComponent: '80',
-      aspectRatio: '2.0',
-    } : {
-      nodeNodeBetweenLayers: '100',
-      edgeNodeBetweenLayers: '40',
-      edgeEdgeBetweenLayers: '20',
-      componentComponent: '48',
-      aspectRatio: '1.8',
-    };
+    const spacing = isDenseGraph
+      ? {
+          nodeNodeBetweenLayers: '140',
+          edgeNodeBetweenLayers: '80',
+          edgeEdgeBetweenLayers: '60',
+          componentComponent: '80',
+          aspectRatio: '2.0',
+        }
+      : {
+          nodeNodeBetweenLayers: '100',
+          edgeNodeBetweenLayers: '40',
+          edgeEdgeBetweenLayers: '20',
+          componentComponent: '48',
+          aspectRatio: '1.8',
+        };
 
     const graph: ElkNode = {
       id: 'root',
@@ -105,8 +107,10 @@ export class ElkLayoutEngine implements LayoutEngine {
           this.options.ranksep ?? parseInt(spacing.nodeNodeBetweenLayers)
         ),
         'elk.spacing.nodeNode': String(this.options.nodesep ?? 40),
-        'elk.layered.spacing.edgeNodeBetweenLayers': spacing.edgeNodeBetweenLayers,
-        'elk.layered.spacing.edgeEdgeBetweenLayers': spacing.edgeEdgeBetweenLayers,
+        'elk.layered.spacing.edgeNodeBetweenLayers':
+          spacing.edgeNodeBetweenLayers,
+        'elk.layered.spacing.edgeEdgeBetweenLayers':
+          spacing.edgeEdgeBetweenLayers,
 
         'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
         'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
