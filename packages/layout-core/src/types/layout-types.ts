@@ -8,6 +8,11 @@ export interface LayoutOptions {
   marginy?: number;
 }
 
+export interface Point {
+  x: number;
+  y: number;
+}
+
 export interface NodePosition {
   x: number;
   y: number;
@@ -29,7 +34,13 @@ export interface EdgeData {
 }
 
 export interface EdgePath {
-  points: { x: number; y: number }[];
+  points: Point[];
+}
+
+export interface LayoutResult {
+  nodes: Record<string, NodePosition>;
+  edges: Record<string, EdgePath>;
+  bounds: { width: number; height: number };
 }
 
 export type RankMap = Map<string, number>;
