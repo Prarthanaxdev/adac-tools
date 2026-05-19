@@ -23,7 +23,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "elkjs": "^0.11.0"
+    "elkjs": "^0.11.1"
   },
   "devDependencies": {
     "@mindfiredigital/adac-compliance": "workspace:*",
