@@ -11,9 +11,16 @@ Lightweight graph layout engine using Dagre for ADAC diagrams. Best for simple h
 
 ## Installation
 
-```bash
-npm install @mindfiredigital/adac-layout-dagre
-pnpm add @mindfiredigital/adac-layout-dagre
+> **Note:** This is an internal workspace package and is **not** distributed as a standalone npm module. It is intended to be used within the ADAC monorepo.
+
+To use it in another workspace package, add it to your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@mindfiredigital/adac-layout-dagre": "workspace:*"
+  }
+}
 ```
 
 ## Usage

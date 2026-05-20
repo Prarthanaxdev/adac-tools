@@ -51,10 +51,10 @@ Generate a diagram SVG from an ADAC YAML string.
 }
 ```
 
-| Field     | Type               | Required | Description                    |
-| --------- | ------------------ | -------- | ------------------------------ |
-| `content` | `string`           | ✅       | ADAC YAML content              |
-| `layout`  | `'elk' \| 'dagre'` | —        | Layout engine (default: `elk`) |
+| Field     | Type                           | Required | Description                    |
+| --------- | ------------------------------ | -------- | ------------------------------ |
+| `content` | `string`                       | ✅       | ADAC YAML content              |
+| `layout`  | `'elk' \| 'dagre' \| 'custom'` | —        | Layout engine (default: `elk`) |
 
 **Response `200`**
 

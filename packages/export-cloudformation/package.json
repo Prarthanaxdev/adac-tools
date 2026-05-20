@@ -14,7 +14,7 @@
   "dependencies": {
     "@mindfiredigital/adac-parser": "workspace:*",
     "@mindfiredigital/adac-schema": "workspace:*",
-    "handlebars": "^4.7.8"
+    "handlebars": "^4.7.9"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",

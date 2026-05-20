@@ -2,10 +2,12 @@
 
 Core diagram generation logic and CLI for ADAC (Architecture Diagram As Code). Includes automatic **architecture optimization** analysis on every diagram generation.
 
+**Note:** This package is released and distributed as an npm module.
+
 ## Features
 
 - **CLI Tool**: The `adac` command-line tool for generating SVG diagrams from YAML
-- **Multiple Layout Engines**: ELK (`elkjs`) and Dagre
+- **Multiple Layout Engines**: ELK (`elkjs`), Dagre, and Custom
 - **SVG Rendering**: High-quality SVG output with embedded icons and styling
 - **Validation**: Integrated schema validation before generation
 - **🔍 Optimizer**: Automatic architecture optimization recommendations (cost, security, reliability) printed to the console on every run
@@ -49,15 +51,15 @@ pnpm cli diagram yamls/aws.adac.yaml --no-optimize -o test_aws.svg
 
 ### All `diagram` options
 
-| Flag                  | Default       | Description                               |
-| --------------------- | ------------- | ----------------------------------------- |
-| `-l, --layout <type>` | `elk`         | Layout engine: `elk` or `dagre`           |
-| `-o, --output <path>` | `<input>.svg` | Output SVG file path                      |
-| `--validate`          | —             | Run schema validation before generation   |
-| `--cost`              | —             | Print cost breakdown alongside generation |
-| `--pricing <model>`   | `on_demand`   | `on_demand` or `reserved`                 |
-| `--period <period>`   | `monthly`     | `hourly`, `daily`, `monthly`, `yearly`    |
-| `--no-optimize`       | —             | Skip architecture optimization analysis   |
+| Flag                  | Default       | Description                                |
+| --------------------- | ------------- | ------------------------------------------ |
+| `-l, --layout <type>` | `elk`         | Layout engine: `elk`, `dagre`, or `custom` |
+| `-o, --output <path>` | `<input>.svg` | Output SVG file path                       |
+| `--validate`          | —             | Run schema validation before generation    |
+| `--cost`              | —             | Print cost breakdown alongside generation  |
+| `--pricing <model>`   | `on_demand`   | `on_demand` or `reserved`                  |
+| `--period <period>`   | `monthly`     | `hourly`, `daily`, `monthly`, `yearly`     |
+| `--no-optimize`       | —             | Skip architecture optimization analysis    |
 
 ### Other commands
 

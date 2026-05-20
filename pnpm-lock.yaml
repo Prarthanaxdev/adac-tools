@@ -162,7 +162,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/compliance:
     dependencies:
@@ -178,7 +178,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/core:
     dependencies:
@@ -218,7 +218,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/cost:
     dependencies:
@@ -234,7 +234,7 @@ importers:
         version: 4.0.9
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/diagram:
     dependencies:
@@ -268,13 +268,13 @@ importers:
         version: 25.3.0
       '@vitest/coverage-v8':
         specifier: ^4.0.18
-        version: 4.0.18(vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3))
+        version: 4.0.18(vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3))
       tsup:
         specifier: ^8.3.5
         version: 8.5.1(jiti@2.6.1)(postcss@8.5.14)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.3)
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/doc:
     dependencies:
@@ -303,7 +303,7 @@ importers:
         specifier: workspace:*
         version: link:../schema
       handlebars:
-        specifier: ^4.7.8
+        specifier: ^4.7.9
         version: 4.7.9
     devDependencies:
       '@types/node':
@@ -344,7 +344,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/icons-aws:
     devDependencies:
@@ -353,7 +353,7 @@ importers:
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/icons-azure:
     devDependencies:
@@ -389,7 +389,7 @@ importers:
         version: 10.9.2(@types/node@25.3.0)(typescript@5.9.3)
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/layout:
     dependencies:
@@ -405,7 +405,7 @@ importers:
     devDependencies:
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/layout-core:
     devDependencies:
@@ -479,7 +479,7 @@ importers:
         version: 4.0.9
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/schema:
     dependencies:
@@ -495,7 +495,7 @@ importers:
         version: 25.3.0
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/templates:
     devDependencies:
@@ -623,7 +623,7 @@ importers:
         version: 6.4.2(@types/node@24.10.12)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.3)
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@24.10.12)(@vitest/ui@4.1.1)(jiti@1.21.7)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@24.10.12)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@1.21.7)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   packages/web-server:
     dependencies:
@@ -687,7 +687,7 @@ importers:
         version: 10.9.2(@types/node@20.11.0)(typescript@5.9.3)
       vitest:
         specifier: ^4.0.18
-        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@20.11.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+        version: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@20.11.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
 packages:
 
@@ -1682,79 +1682,66 @@ packages:
     resolution: {integrity: sha512-L+34Qqil+v5uC0zEubW7uByo78WOCIrBvci69E7sFASRl0X7b/MB6Cqd1lky/CtcSVTydWa2WZwFuWexjS5o6g==}
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-arm-musleabihf@4.60.1':
     resolution: {integrity: sha512-n83O8rt4v34hgFzlkb1ycniJh7IR5RCIqt6mz1VRJD6pmhRi0CXdmfnLu9dIUS6buzh60IvACM842Ffb3xd6Gg==}
     cpu: [arm]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-arm64-gnu@4.60.1':
     resolution: {integrity: sha512-Nql7sTeAzhTAja3QXeAI48+/+GjBJ+QmAH13snn0AJSNL50JsDqotyudHyMbO2RbJkskbMbFJfIJKWA6R1LCJQ==}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-arm64-musl@4.60.1':
     resolution: {integrity: sha512-+pUymDhd0ys9GcKZPPWlFiZ67sTWV5UU6zOJat02M1+PiuSGDziyRuI/pPue3hoUwm2uGfxdL+trT6Z9rxnlMA==}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-loong64-gnu@4.60.1':
     resolution: {integrity: sha512-VSvgvQeIcsEvY4bKDHEDWcpW4Yw7BtlKG1GUT4FzBUlEKQK0rWHYBqQt6Fm2taXS+1bXvJT6kICu5ZwqKCnvlQ==}
     cpu: [loong64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-loong64-musl@4.60.1':
     resolution: {integrity: sha512-4LqhUomJqwe641gsPp6xLfhqWMbQV04KtPp7/dIp0nzPxAkNY1AbwL5W0MQpcalLYk07vaW9Kp1PBhdpZYYcEw==}
     cpu: [loong64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-ppc64-gnu@4.60.1':
     resolution: {integrity: sha512-tLQQ9aPvkBxOc/EUT6j3pyeMD6Hb8QF2BTBnCQWP/uu1lhc9AIrIjKnLYMEroIz/JvtGYgI9dF3AxHZNaEH0rw==}
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-ppc64-musl@4.60.1':
     resolution: {integrity: sha512-RMxFhJwc9fSXP6PqmAz4cbv3kAyvD1etJFjTx4ONqFP9DkTkXsAMU4v3Vyc5BgzC+anz7nS/9tp4obsKfqkDHg==}
     cpu: [ppc64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-riscv64-gnu@4.60.1':
     resolution: {integrity: sha512-QKgFl+Yc1eEk6MmOBfRHYF6lTxiiiV3/z/BRrbSiW2I7AFTXoBFvdMEyglohPj//2mZS4hDOqeB0H1ACh3sBbg==}
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-musl@4.60.1':
     resolution: {integrity: sha512-RAjXjP/8c6ZtzatZcA1RaQr6O1TRhzC+adn8YZDnChliZHviqIjmvFwHcxi4JKPSDAt6Uhf/7vqcBzQJy0PDJg==}
     cpu: [riscv64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-s390x-gnu@4.60.1':
     resolution: {integrity: sha512-wcuocpaOlaL1COBYiA89O6yfjlp3RwKDeTIA0hM7OpmhR1Bjo9j31G1uQVpDlTvwxGn2nQs65fBFL5UFd76FcQ==}
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-x64-gnu@4.60.1':
     resolution: {integrity: sha512-77PpsFQUCOiZR9+LQEFg9GClyfkNXj1MP6wRnzYs0EeWbPcHs02AXu4xuUbM1zhwn3wqaizle3AEYg5aeoohhg==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-x64-musl@4.60.1':
     resolution: {integrity: sha512-5cIATbk5vynAjqqmyBjlciMJl1+R/CwX9oLk/EyiFXDWd95KpHdrOJT//rnUl4cUcskrd0jCCw3wpZnhIHdD9w==}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-openbsd-x64@4.60.1':
     resolution: {integrity: sha512-cl0w09WsCi17mcmWqqglez9Gk8isgeWvoUZ3WiJFYSR3zjBQc2J5/ihSjpl+VLjPqjQ/1hJRcqBfLjssREQILw==}
@@ -8660,7 +8647,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@4.0.18(vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3))':
+  '@vitest/coverage-v8@4.0.18(vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/utils': 4.0.18
@@ -8672,7 +8659,7 @@ snapshots:
       obug: 2.1.1
       std-env: 3.10.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
+      vitest: 4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3)
 
   '@vitest/coverage-v8@4.0.18(vitest@4.0.18)':
     dependencies:
@@ -8697,6 +8684,14 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.0.3
 
+  '@vitest/mocker@4.0.18(vite@6.4.2(@types/node@22.19.19)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))':
+    dependencies:
+      '@vitest/spy': 4.0.18
+      estree-walker: 3.0.3
+      magic-string: 0.30.21
+    optionalDependencies:
+      vite: 6.4.2(@types/node@22.19.19)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)
+
   '@vitest/mocker@4.0.18(vite@6.4.2(@types/node@24.10.12)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.3))':
     dependencies:
       '@vitest/spy': 4.0.18
@@ -8712,14 +8707,6 @@ snapshots:
       magic-string: 0.30.21
     optionalDependencies:
       vite: 6.4.2(@types/node@25.2.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)
-
-  '@vitest/mocker@4.0.18(vite@6.4.2(@types/node@25.3.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))':
-    dependencies:
-      '@vitest/spy': 4.0.18
-      estree-walker: 3.0.3
-      magic-string: 0.30.21
-    optionalDependencies:
-      vite: 6.4.2(@types/node@25.3.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)
 
   '@vitest/pretty-format@4.0.18':
     dependencies:
@@ -12727,7 +12714,7 @@ snapshots:
       tsx: 4.21.0
       yaml: 2.8.3
 
-  vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@20.11.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3):
+  vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@20.11.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       '@vitest/expect': 4.0.18
       '@vitest/mocker': 4.0.18(vite@6.4.2(@types/node@25.2.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
@@ -12770,7 +12757,7 @@ snapshots:
   vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@22.19.19)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       '@vitest/expect': 4.0.18
-      '@vitest/mocker': 4.0.18(vite@6.4.2(@types/node@25.2.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
+      '@vitest/mocker': 4.0.18(vite@6.4.2(@types/node@22.19.19)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
       '@vitest/pretty-format': 4.0.18
       '@vitest/runner': 4.0.18
       '@vitest/snapshot': 4.0.18
@@ -12807,7 +12794,7 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@24.10.12)(@vitest/ui@4.1.1)(jiti@1.21.7)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3):
+  vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@24.10.12)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@1.21.7)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       '@vitest/expect': 4.0.18
       '@vitest/mocker': 4.0.18(vite@6.4.2(@types/node@24.10.12)(jiti@1.21.7)(tsx@4.21.0)(yaml@2.8.3))
@@ -12887,10 +12874,10 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1)(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3):
+  vitest@4.0.18(@edge-runtime/vm@3.2.0)(@types/node@25.3.0)(@vitest/ui@4.1.1(vitest@4.0.18))(jiti@2.6.1)(jsdom@29.0.1(@noble/hashes@1.8.0))(tsx@4.21.0)(yaml@2.8.3):
     dependencies:
       '@vitest/expect': 4.0.18
-      '@vitest/mocker': 4.0.18(vite@6.4.2(@types/node@25.3.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
+      '@vitest/mocker': 4.0.18(vite@6.4.2(@types/node@25.2.2)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
       '@vitest/pretty-format': 4.0.18
       '@vitest/runner': 4.0.18
       '@vitest/snapshot': 4.0.18
