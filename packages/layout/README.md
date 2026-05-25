@@ -11,9 +11,16 @@ Layout orchestration for ADAC diagrams. Provides a unified interface for differe
 
 ## Installation
 
-```bash
-npm install @mindfiredigital/adac-layout
-pnpm add @mindfiredigital/adac-layout
+> **Note:** This is an internal workspace package and is **not** distributed as a standalone npm module. It is intended to be used within the ADAC monorepo.
+
+To use it in another workspace package, add it to your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@mindfiredigital/adac-layout": "workspace:*"
+  }
+}
 ```
 
 ## Usage

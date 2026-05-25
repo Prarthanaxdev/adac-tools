@@ -16,10 +16,16 @@ Architecture optimization analysis for ADAC configurations. Automatically analys
 
 ## Installation
 
-```bash
-npm install @mindfiredigital/adac-optimizer
-# or
-pnpm add @mindfiredigital/adac-optimizer
+> **Note:** This is an internal workspace package and is **not** distributed as a standalone npm module. It is intended to be used within the ADAC monorepo.
+
+To use it in another workspace package, add it to your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@mindfiredigital/adac-optimizer": "workspace:*"
+  }
+}
 ```
 
 ## Quick Start
