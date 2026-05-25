@@ -4,6 +4,7 @@ export {
   generateK8sManifestsFromAdacFile,
   renderK8sYaml,
   toK8sName,
+  UnsupportedAdacNodeError,
 } from './k8s-generator.js';
 export {
   createConfigMapManifest,

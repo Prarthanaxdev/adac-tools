@@ -24,13 +24,16 @@ function toK8sName(value: string): string {
 }
 
 function backend(serviceName: unknown, port: unknown): Record<string, unknown> {
+  const parsedPort = Number(port ?? 80);
+  const portNumber =
+    Number.isFinite(parsedPort) && Number.isInteger(parsedPort)
+      ? parsedPort
+      : 80;
+
   return {
     service: {
       name: toK8sName(String(serviceName)),
-      port:
-        typeof port === 'string'
-          ? { name: port }
-          : { number: Number(port ?? 80) },
+      port: typeof port === 'string' ? { name: port } : { number: portNumber },
     },
   };
 }

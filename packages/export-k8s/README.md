@@ -15,9 +15,8 @@ Generate Kubernetes manifests from ADAC architecture definitions.
 ```ts
 import { generateK8sManifestsFromAdacFile } from '@mindfiredigital/adac-export-k8s';
 
-const result = generateK8sManifestsFromAdacFile('architecture.adac.yaml', {
-  validate: false,
-});
+// Validation is enabled by default. To disable validation, pass { validate: false } as the second argument.
+const result = generateK8sManifestsFromAdacFile('architecture.adac.yaml');
 
 console.log(result.yaml);
 ```
@@ -72,7 +71,7 @@ Generates manifests from a list of ADAC services.
 
 ## Options
 
-- `cloudId`: select a specific cloud entry
-- `namespace`: default namespace when a service does not define one
-- `includeNamespaceManifests`: include Namespace documents for non-default namespaces
-- `validate`: enable ADAC schema validation when parsing files
+- `cloudId` (`string | undefined`, default: `undefined`): select a specific cloud entry; when omitted, the first Kubernetes cloud is used, falling back to the first cloud.
+- `namespace` (`string`, default: `"default"`): default namespace used when a service does not define one.
+- `includeNamespaceManifests` (`boolean`, default: `true`): include Namespace documents for non-default namespaces.
+- `validate` (`boolean`, default: `true`): enable ADAC schema validation when parsing files.

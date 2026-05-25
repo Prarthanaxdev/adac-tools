@@ -21,6 +21,35 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
+export class UnsupportedAdacNodeError extends Error {
+  readonly nodeId: string;
+  readonly nodeType?: string;
+  readonly nodeSubtype?: string;
+  readonly nodeService?: string;
+
+  constructor(service: AdacService) {
+    const nodeId = service.id;
+    const details = [
+      service.type ? `type "${service.type}"` : undefined,
+      service.subtype ? `subtype "${service.subtype}"` : undefined,
+      service.service ? `service "${service.service}"` : undefined,
+    ].filter((value): value is string => Boolean(value));
+
+    super(
+      `Unsupported ADAC node "${nodeId}"${
+        details.length > 0 ? ` with ${details.join(', ')}` : ''
+      }. Supported Kubernetes node types are deployment, service, ingress, configmap, and secret.`
+    );
+
+    this.name = 'UnsupportedAdacNodeError';
+    this.nodeId = nodeId;
+    this.nodeType = service.type;
+    this.nodeSubtype = service.subtype;
+    this.nodeService = service.service;
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
 export function toK8sName(value: string): string {
   const normalized = value
     .toLowerCase()
@@ -32,7 +61,7 @@ export function toK8sName(value: string): string {
   return normalized || 'adac-resource';
 }
 
-function normalizeKind(service: AdacService): K8sWorkloadKind | undefined {
+function normalizeKind(service: AdacService): K8sWorkloadKind {
   const candidates = [service.subtype, service.service, service.type]
     .filter((value): value is string => typeof value === 'string')
     .map((value) => value.toLowerCase());
@@ -77,15 +106,14 @@ function normalizeKind(service: AdacService): K8sWorkloadKind | undefined {
     return 'secret';
   }
 
-  return undefined;
+  throw new UnsupportedAdacNodeError(service);
 }
 
 function normalizeService(
   service: AdacService,
   options: K8sGenerationOptions
-): NormalizedK8sService | undefined {
+): NormalizedK8sService {
   const kind = normalizeKind(service);
-  if (!kind) return undefined;
 
   const config = {
     ...(isRecord(service.configuration) ? service.configuration : {}),
@@ -169,9 +197,9 @@ export function generateK8sManifests(
   services: AdacService[],
   options: K8sGenerationOptions = {}
 ): K8sGenerationResult {
-  const normalizedServices = services
-    .map((service) => normalizeService(service, options))
-    .filter((service): service is NormalizedK8sService => Boolean(service));
+  const normalizedServices = services.map((service) =>
+    normalizeService(service, options)
+  );
   const namespaces = Array.from(
     new Set(normalizedServices.map((service) => service.namespace))
   ).sort();
@@ -194,7 +222,6 @@ export function generateK8sManifests(
       `Processed ${services.length} services`,
       `Generated ${manifests.length} manifests`,
       `Generated ${namespaceManifests.length} namespaces`,
-      `Skipped ${services.length - normalizedServices.length} non-Kubernetes services`,
     ],
   };
 }

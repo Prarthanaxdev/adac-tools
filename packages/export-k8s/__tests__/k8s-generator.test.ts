@@ -1,10 +1,80 @@
+it('ensures every manifest has required managed-by label', () => {
+  const result = generateFromYaml(adacYaml);
+  for (const manifest of result.manifests) {
+    expect(manifest.metadata?.labels?.['app.kubernetes.io/managed-by']).toBe(
+      'adac'
+    );
+  }
+});
+
+it('normalizes invalid service names to DNS subdomain format', () => {
+  const invalidNameYaml = `
+      version: '0.1'
+      metadata:
+        name: 'Invalid Name Test'
+      infrastructure:
+        clouds:
+          - id: 'k8s-cluster'
+            provider: 'kubernetes'
+            services:
+              - id: 'Invalid_Name_123'
+                type: 'compute'
+                subtype: 'kubernetes-deployment'
+                config:
+                  image: 'nginx:latest'
+    `;
+  const result = generateFromYaml(invalidNameYaml);
+  const serviceManifest = result.manifests.find((m) => m.kind === 'Deployment');
+  // DNS-1123 subdomain regex: '^[a-z0-9]([-a-z0-9]*[a-z0-9])?$'
+  expect(serviceManifest?.metadata?.name).toMatch(
+    /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/
+  );
+});
+
+it('throws UnsupportedAdacNodeError for unsupported node types', () => {
+  const unsupportedYaml = `
+      version: '0.1'
+      metadata:
+        name: 'Unsupported Node Test'
+      infrastructure:
+        clouds:
+          - id: 'k8s-cluster'
+            provider: 'kubernetes'
+            services:
+              - id: 'unsupported-service'
+                type: 'compute'
+                subtype: 'kubernetes-statefulset'
+                config:
+                  image: 'nginx:latest'
+    `;
+
+  let error: unknown;
+  try {
+    generateFromYaml(unsupportedYaml);
+  } catch (err) {
+    error = err;
+  }
+
+  expect(error).toBeInstanceOf(UnsupportedAdacNodeError);
+  if (error instanceof UnsupportedAdacNodeError) {
+    expect(error.nodeId).toBe('unsupported-service');
+    expect(error.nodeType).toBe('compute');
+    expect(error.nodeSubtype).toBe('kubernetes-statefulset');
+    expect(error.message).toContain('unsupported-service');
+    expect(error.message).toContain('compute');
+    expect(error.message).toContain('kubernetes-statefulset');
+  }
+});
 import { execFileSync } from 'child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import yaml from 'js-yaml';
 import { afterEach, describe, expect, it } from 'vitest';
-import { generateK8sManifestsFromAdacFile } from '../src/index.js';
+import {
+  generateK8sManifestsFromAdacFile,
+  UnsupportedAdacNodeError,
+} from '../src/index.js';
 
 const TEMP_DIR_PREFIX = join(tmpdir(), 'adac-export-k8s-');
 const tempDirs: string[] = [];
@@ -34,13 +104,36 @@ function hasKubectl(): boolean {
   }
 }
 
-function generateFromYaml(content: string) {
+function generateFromYaml(
+  content: string,
+  options: { validate?: boolean } = { validate: false }
+) {
   const tempDir = createTempDir();
   const filePath = join(tempDir, 'k8s.adac.yaml');
   writeFileSync(filePath, content);
-
-  return generateK8sManifestsFromAdacFile(filePath, { validate: false });
+  return generateK8sManifestsFromAdacFile(filePath, {
+    validate: options.validate ?? false,
+  });
 }
+describe('generateK8sManifestsFromAdacFile schema validation', () => {
+  it('throws on invalid ADAC YAML when validate: true', () => {
+    const invalidAdacYaml = `
+      version: '0.1'
+      metadata:
+        name: 'Invalid Test'
+      # missing required fields like infrastructure
+    `;
+    expect(() =>
+      generateFromYaml(invalidAdacYaml, { validate: true })
+    ).toThrow();
+  });
+
+  it('succeeds on valid ADAC YAML when validate: true', () => {
+    expect(() => generateFromYaml(adacYaml, { validate: true })).not.toThrow();
+    const result = generateFromYaml(adacYaml, { validate: true });
+    expect(result.yaml).toContain('apiVersion: apps/v1');
+  });
+});
 
 const adacYaml = `
 version: '0.1'
@@ -151,6 +244,13 @@ describe('generateK8sManifestsFromAdacFile', () => {
     const namespace = result.manifests.find(
       (manifest) => manifest.kind === 'Namespace'
     );
+
+    expect(namespace).toBeDefined();
+    expect(configMap).toBeDefined();
+    expect(secret).toBeDefined();
+    expect(deployment).toBeDefined();
+    expect(service).toBeDefined();
+    expect(ingress).toBeDefined();
 
     expect(namespace?.metadata.name).toBe('web');
     expect(configMap?.metadata.namespace).toBe('web');

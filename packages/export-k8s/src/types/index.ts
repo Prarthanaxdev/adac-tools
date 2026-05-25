@@ -41,7 +41,7 @@ export interface K8sGenerationOptions {
   validate?: boolean;
 }
 
-export interface K8sFromAdacOptions extends K8sGenerationOptions {}
+export type K8sFromAdacOptions = K8sGenerationOptions;
 
 export interface K8sGenerationResult {
   yaml: string;
