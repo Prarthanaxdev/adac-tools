@@ -12,10 +12,16 @@ CLI command parser for ADAC diagram generation. Provides command-line interface 
 
 ## Installation
 
-```bash
-npm install @mindfiredigital/adac-cli
-# or
-pnpm add @mindfiredigital/adac-cli
+> **Note:** This is an internal workspace package and is **not** distributed as a standalone npm module. It is intended to be used within the ADAC monorepo.
+
+To use it in another workspace package, add it to your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@mindfiredigital/adac-cli": "workspace:*"
+  }
+}
 ```
 
 ## Usage
@@ -52,7 +58,7 @@ Generate an SVG diagram from an ADAC YAML file. The architecture optimizer runs 
 
 | Flag                  | Default       | Description                                 |
 | --------------------- | ------------- | ------------------------------------------- |
-| `-l, --layout <type>` | `elk`         | `elk` or `dagre`                            |
+| `-l, --layout <type>` | `elk`         | `elk`, `dagre`, or `custom`                 |
 | `-o, --output <path>` | `<input>.svg` | Output path                                 |
 | `--validate`          | —             | Schema validation before generation         |
 | `--cost`              | —             | Print cost breakdown                        |
@@ -79,7 +85,7 @@ export type CLIOptions = {
   generateDiagram: (
     input: string,
     output: string,
-    layoutOverride?: 'elk' | 'dagre',
+    layoutOverride?: 'elk' | 'dagre' | 'custom',
     validate?: boolean,
     costData?: Record<string, number>,
     period?: CostPeriod,

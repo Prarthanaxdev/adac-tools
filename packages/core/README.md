@@ -2,10 +2,12 @@
 
 Core integration package for ADAC — brings together parsing, validation, layout engines, compliance checking, and **architecture optimization** to orchestrate diagram generation.
 
+**Note:** This package is released and distributed as an npm module.
+
 ## Features
 
 - 🎯 Unified orchestration of parsing, validation, and rendering
-- 🎨 Multiple layout engine support (ELK and Dagre)
+- 🎨 Multiple layout engine support (ELK, Dagre, and Custom)
 - ✅ Compliance validation integration (auto-detected from YAML)
 - 🔍 **Architecture optimizer** — runs automatically, produces prioritised recommendations
 - 📦 Zero external runtime dependencies (bundled)
@@ -72,6 +74,9 @@ const resultElk = await generateDiagramSvg(yaml, 'elk');
 
 // Dagre (lightweight — good for simple hierarchies)
 const resultDagre = await generateDiagramSvg(yaml, 'dagre');
+
+// Custom (user-defined layout algorithm)
+const resultCustom = await generateDiagramSvg(yaml, 'custom');
 ```
 
 ### Error handling
@@ -94,7 +99,7 @@ Generates an SVG diagram from YAML content. Runs compliance checks and the archi
 | Parameter       | Type                                           | Default     | Description                              |
 | --------------- | ---------------------------------------------- | ----------- | ---------------------------------------- |
 | `yaml`          | `string`                                       | —           | ADAC YAML configuration content          |
-| `layoutEngine`  | `'elk' \| 'dagre'`                             | `'elk'`     | Graph layout algorithm                   |
+| `layoutEngine`  | `'elk' \| 'dagre' \| 'custom'`                 | `'elk'`     | Graph layout algorithm                   |
 | `validate`      | `boolean`                                      | `false`     | Run schema validation before layout      |
 | `costData`      | `Record<string, number>`                       | —           | Per-service cost overrides (optional)    |
 | `period`        | `'hourly' \| 'daily' \| 'monthly' \| 'yearly'` | `'monthly'` | Cost display period                      |

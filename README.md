@@ -11,7 +11,15 @@ ADAC is a comprehensive ecosystem for generating high-quality multi-cloud archit
 
 The project is managed as a **pnpm monorepo**, ensuring modularity and clean separation of concerns.
 
-### 📦 Packages
+### 📦 Packages & Distribution Strategy
+
+While this monorepo contains many packages, **only the following are officially released and distributed to the public**:
+
+- `@mindfiredigital/adac-core` (Published as an npm module)
+- `@mindfiredigital/adac-diagram` (Published as an npm module)
+- `adac-vscode` (Published as a VS Code Extension)
+
+Other packages (like parsers, layouts, and web interfaces) are either bundled into the above releases or used internally for development and testing.
 
 | Package                                  | Description                     | Key Responsibilities                                                                |
 | :--------------------------------------- | :------------------------------ | :---------------------------------------------------------------------------------- |
@@ -29,6 +37,7 @@ The project is managed as a **pnpm monorepo**, ensuring modularity and clean sep
 | **`@mindfiredigital/adac-optimizer`**    | **Architecture Optimizer.**     | Automatic cost, security & reliability recommendations on every diagram run.        |
 | **`@mindfiredigital/adac-web`**          | Frontend.                       | React-based visual editor with drag-and-drop and real-time preview.                 |
 | **`@mindfiredigital/adac-web-server`**   | API.                            | Express server exposing diagram generation, optimization & compliance as a service. |
+| **`adac-vscode`**                        | VS Code Extension.              | IDE support for `.adac.yaml` files, syntax highlighting, IntelliSense & previews.   |
 
 ---
 
@@ -181,7 +190,7 @@ When cloning this repo, pay attention to:
 
 1.  **Core** is a bundleable npm package.
 2.  **Core** uses `schema` for validation and `parser` for parsing.
-3.  **Core** supports both `elk` and `dagre` layout strategies.
+3.  **Core** supports `elk`, `dagre`, and `custom` layout strategies.
 4.  **CLI** is decoupled into its own package for clean command management.
 5.  **Diagram** provides both a CLI entry point and an npm module API.
 6.  **Web Server** consumes the `diagram` package as a standard npm module.

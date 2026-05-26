@@ -12,9 +12,16 @@ Core types and interfaces for graph layout engines in ADAC. Provides the contrac
 
 ## Installation
 
-```bash
-npm install @mindfiredigital/adac-layout-core
-pnpm add @mindfiredigital/adac-layout-core
+> **Note:** This is an internal workspace package and is **not** distributed as a standalone npm module. It is intended to be used within the ADAC monorepo.
+
+To use it in another workspace package, add it to your `package.json`:
+
+```json
+{
+  "dependencies": {
+    "@mindfiredigital/adac-layout-core": "workspace:*"
+  }
+}
 ```
 
 ## Core Types
